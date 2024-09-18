@@ -3,6 +3,8 @@ package com.bookstore.repository;
 import com.bookstore.entity.Book;
 import com.bookstore.exception.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,12 +12,9 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book save(Book book) {
@@ -40,9 +39,9 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Book getById(Long id) {
+    public Optional<Book> findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Book.class, id);
+            return Optional.of(session.get(Book.class, id));
         } catch (Exception e) {
             throw new EntityNotFoundException("Unable to get the book with and id of " + id, e);
         }
