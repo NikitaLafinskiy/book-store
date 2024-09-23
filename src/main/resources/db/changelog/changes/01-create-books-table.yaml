@@ -44,13 +44,5 @@ databaseChangeLog:
                   name: is_deleted
                   type: BOOLEAN
                   defaultValueBoolean: false
-
-  - changeSet:
-      id: 2
-      author: nikita
-      changes:
-        - addNotNullConstraint:
-            tableName: books
-            columnName: is_deleted
-            columnDataType: BOOLEAN
-            defaultValueBoolean: false
+                  constraints:
+                    nullable: false

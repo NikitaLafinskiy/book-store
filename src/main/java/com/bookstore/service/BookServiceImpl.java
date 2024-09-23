@@ -40,8 +40,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto updateById(Long id, CreateBookRequestDto createBookRequestDto) {
-        Book book = bookMapper.toBookEntity(createBookRequestDto);
-        book.setId(id);
+        Book book = bookMapper.updateBookFromDto(createBookRequestDto, id);
         return bookMapper.toBookDto(bookRepository.save(book));
     }
 
