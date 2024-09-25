@@ -28,7 +28,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             error.put(fieldError.getField() + "fieldError",
                     fieldError.getField() + ": " + fieldError.getDefaultMessage());
         }
-        return new ResponseEntity<>(error, status);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
