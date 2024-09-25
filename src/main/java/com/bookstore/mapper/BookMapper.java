@@ -5,7 +5,7 @@ import com.bookstore.dto.BookDto;
 import com.bookstore.dto.CreateBookRequestDto;
 import com.bookstore.entity.Book;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
@@ -13,6 +13,5 @@ public interface BookMapper {
 
     Book toBookEntity(CreateBookRequestDto createBookRequestDto);
 
-    @Mapping(target = "id", source = "id")
-    Book updateBookFromDto(CreateBookRequestDto createBookRequestDto, Long id);
+    void updateBookFromDto(CreateBookRequestDto createBookRequestDto, @MappingTarget Book book);
 }
