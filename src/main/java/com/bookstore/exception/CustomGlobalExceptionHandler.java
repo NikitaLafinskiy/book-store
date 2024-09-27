@@ -32,7 +32,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAll(Exception ex) {
+    public ResponseEntity<Object> handleException(Exception ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("message", ex.getMessage());
         error.put("timestamp", LocalDateTime.now());
