@@ -28,11 +28,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             error.put(fieldError.getField() + "fieldError",
                     fieldError.getField() + ": " + fieldError.getDefaultMessage());
         }
-        return new ResponseEntity<>(error, status);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAll(Exception ex) {
+    public ResponseEntity<Object> handleException(Exception ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("message", ex.getMessage());
         error.put("timestamp", LocalDateTime.now());
