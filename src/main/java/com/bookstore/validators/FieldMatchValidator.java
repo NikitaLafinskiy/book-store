@@ -2,8 +2,8 @@ package com.bookstore.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.lang.reflect.InvocationTargetException;
-import org.apache.commons.beanutils.BeanUtils;
+import java.util.Objects;
+import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Object> {
     private String firstFieldName;
@@ -19,14 +19,11 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
     public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
         boolean toReturn;
 
-        try {
-            final Object firstFieldValue = BeanUtils.getProperty(value, firstFieldName);
-            final Object secondFieldValue = BeanUtils.getProperty(value, secondFieldName);
-            toReturn = (firstFieldValue == null && secondFieldValue == null)
-                        || (firstFieldValue != null && firstFieldValue.equals(secondFieldValue));
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            throw new RuntimeException("Unable to compare two field names, " + e);
-        }
+        final Object firstFieldValue = new BeanWrapperImpl(value)
+                .getPropertyValue(firstFieldName);
+        final Object secondFieldValue = new BeanWrapperImpl(value)
+                .getPropertyValue(secondFieldName);
+        toReturn = Objects.equals(firstFieldValue, secondFieldValue);
 
         if (!toReturn) {
             constraintValidatorContext.disableDefaultConstraintViolation();
