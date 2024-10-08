@@ -11,10 +11,6 @@ import lombok.Data;
 public class UserRegistrationRequestDto {
     @NotBlank
     @Size(min = 4, max = 64)
-    private String username;
-
-    @NotBlank
-    @Size(min = 4, max = 64)
     @Email
     private String email;
 
