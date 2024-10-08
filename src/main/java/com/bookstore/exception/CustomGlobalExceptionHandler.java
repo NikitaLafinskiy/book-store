@@ -1,5 +1,6 @@
 package com.bookstore.exception;
 
+import io.jsonwebtoken.JwtException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         error.put("message", ex.getMessage());
         error.put("timestamp", LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Object> handleJwtException(JwtException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        error.put("timestamp", LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
