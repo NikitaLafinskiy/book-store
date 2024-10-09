@@ -26,7 +26,7 @@ public class JwtUtil {
     private static final String SHIPPING_CLAIM = "shippingAddress";
     private final SecretKey secret;
 
-    @Value("$jwt.expiration")
+    @Value("${jwt.expiration}")
     private long expiration;
 
     public JwtUtil(@Value("${jwt.secret}") String secretString) {
