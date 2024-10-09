@@ -18,6 +18,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Service
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer";
+    private static final int AUTH_HEADER_PARTS_LENGTH = 2;
+    private static final String AUTH_HEADER_DELIMITER = " ";
+    private static final int BEARER_INDEX = 0;
+    private static final int TOKEN_INDEX = 1;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -42,15 +48,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader(AUTH_HEADER);
 
         if (authHeader != null) {
             authHeader = authHeader.trim();
-            String[] authHeaderParts = authHeader.split(" ");
-            if (authHeaderParts.length == 2) {
-                String authPrefix = authHeaderParts[0];
-                String authValue = authHeaderParts[1];
-                if (authPrefix.trim().equalsIgnoreCase("Bearer")) {
+            String[] authHeaderParts = authHeader.split(AUTH_HEADER_DELIMITER);
+            if (authHeaderParts.length == AUTH_HEADER_PARTS_LENGTH) {
+                String authPrefix = authHeaderParts[BEARER_INDEX];
+                String authValue = authHeaderParts[TOKEN_INDEX];
+                if (authPrefix.trim().equalsIgnoreCase(BEARER_PREFIX)) {
                     return authValue;
                 }
             }
