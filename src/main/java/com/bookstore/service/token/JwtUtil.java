@@ -20,12 +20,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
     private static final String AUTHORITIES_CLAIM = "authorities";
     private static final String FIRST_NAME_CLAIM = "firstName";
     private static final String LAST_NAME_CLAIM = "lastName";
     private static final String SHIPPING_CLAIM = "shippingAddress";
     private final SecretKey secret;
+
+    @Value("$jwt.expiration")
+    private long expiration;
 
     public JwtUtil(@Value("${jwt.secret}") String secretString) {
         secret = Keys.hmacShaKeyFor(secretString.getBytes());
@@ -37,7 +39,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .issuedAt(new Date(currentTime))
-                .expiration(new Date(currentTime + EXPIRATION_TIME))
+                .expiration(new Date(currentTime + expiration))
                 .subject(principal.getEmail())
                 .claim(AUTHORITIES_CLAIM, payload.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
@@ -67,7 +69,6 @@ public class JwtUtil {
         return getClaim(token, Claims::getSubject);
     }
 
-    @SuppressWarnings("unchecked")
     public Collection<? extends GrantedAuthority> getAuthorities(String token) {
         List<String> roles = (List<String>)
                 getClaim(token, (claims) -> claims.get(AUTHORITIES_CLAIM));
