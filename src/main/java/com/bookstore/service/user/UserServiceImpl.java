@@ -1,6 +1,5 @@
 package com.bookstore.service.user;
 
-import com.bookstore.dto.cart.ShoppingCartDto;
 import com.bookstore.dto.user.UserLoginRequestDto;
 import com.bookstore.dto.user.UserLoginResponseDto;
 import com.bookstore.dto.user.UserRegistrationRequestDto;

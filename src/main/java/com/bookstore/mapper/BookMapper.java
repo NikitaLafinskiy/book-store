@@ -6,7 +6,6 @@ import com.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.bookstore.dto.book.CreateBookRequestDto;
 import com.bookstore.entity.Book;
 import com.bookstore.entity.Category;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
