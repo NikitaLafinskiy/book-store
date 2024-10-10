@@ -3,6 +3,8 @@ package com.bookstore.controller;
 import com.bookstore.dto.book.BookDto;
 import com.bookstore.dto.book.CreateBookRequestDto;
 import com.bookstore.service.book.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +27,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
     private final BookService bookService;
 
+    @Operation(summary = "Get all books", responses = {
+            @ApiResponse(responseCode = "200", description = "Books retrieved successfully")
+    })
     @PreAuthorize("hasRole('USER')")
     @GetMapping
     public List<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
+    @Operation(summary = "Get a book by ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Book retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Book not found")
+    })
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
+    @Operation(summary = "Create a new book", responses = {
+            @ApiResponse(responseCode = "201", description = "Book created successfully")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
     }
 
+    @Operation(summary = "Update a book by ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Book updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Book not found")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public BookDto updateBookById(@PathVariable Long id,
@@ -50,6 +66,10 @@ public class BookController {
         return bookService.updateById(id, createBookRequestDto);
     }
 
+    @Operation(summary = "Delete a book by ID", responses = {
+            @ApiResponse(responseCode = "204", description = "Book deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Book not found")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)

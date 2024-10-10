@@ -1,8 +1,8 @@
 package com.bookstore.service.user;
 
 import com.bookstore.dto.user.UserRegistrationRequestDto;
-import com.bookstore.dto.user.UserResponseDto;
+import com.bookstore.dto.user.UserRegistrationResponseDto;
 
 public interface UserService {
-    UserResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto);
+    UserRegistrationResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto);
 }
