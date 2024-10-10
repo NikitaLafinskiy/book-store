@@ -9,54 +9,45 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
+@Table(name = "shopping_carts")
 @Getter
 @Setter
-@NoArgsConstructor
-@Table(name = "books")
-@SQLDelete(sql = "UPDATE books SET is_deleted = false WHERE id = ?")
+@SQLDelete(sql = "UPDATE shopping_carts SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
-public class Book {
+@NoArgsConstructor
+public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @MapsId
+    private User user;
 
-    @Column(nullable = false)
-    private String author;
-
-    @Column(unique = true, nullable = false)
-    private String isbn;
-
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    private String description;
-
-    private String coverImage;
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.LAZY)
+    @Cascade(value = CascadeType.PERSIST)
+    private Set<CartItem> cartItems = new HashSet<>();
 
     @Column(columnDefinition = "TINYINT(1)")
     private boolean isDeleted = false;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "books_categories",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories = new HashSet<>();
-
-    public Book(Long id) {
-        this.id = id;
+    public ShoppingCart(User user) {
+        this.user = user;
     }
 }
