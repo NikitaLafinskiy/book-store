@@ -13,5 +13,5 @@ public class OrderDto {
     private Order.Status status;
     private BigDecimal total;
     private LocalDateTime orderDate;
-    private Set<Long> orderItemIds;
+    private Set<OrderItemDto> orderItems;
 }

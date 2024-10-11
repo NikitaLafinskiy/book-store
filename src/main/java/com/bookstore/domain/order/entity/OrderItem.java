@@ -35,4 +35,8 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    public BigDecimal getSubtotal() {
+        return BigDecimal.valueOf(quantity).multiply(price);
+    }
 }

@@ -1,6 +1,8 @@
 package com.bookstore.domain.order.entity;
 
+import com.bookstore.domain.order.dto.OrderItemDto;
 import com.bookstore.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,14 +47,8 @@ public class Order {
     @Column(nullable = false)
     private String shippingAddress;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderItem> orderItems = new HashSet<>();
-
-    public Order bootstrap(Order order) {
-        order.setStatus(Status.PENDING);
-        order.setOrderDate(LocalDateTime.now());
-        return order;
-    }
 
     public enum Status {
         COMPLETED,

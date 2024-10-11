@@ -6,7 +6,7 @@ import com.bookstore.domain.order.dto.UpdateOrderStatusRequestDto;
 import java.util.List;
 
 public interface OrderService {
-    OrderDto createOrder(CreateOrderRequestDto createOrderRequestDto);
+    OrderDto createOrder(String email, CreateOrderRequestDto createOrderRequestDto);
 
     List<OrderDto> getOrderHistory(String email);
 
