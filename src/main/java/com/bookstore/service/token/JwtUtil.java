@@ -1,10 +1,8 @@
 package com.bookstore.service.token;
 
 import com.bookstore.entity.User;
-import com.bookstore.exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Collection;
@@ -52,17 +50,12 @@ public class JwtUtil {
     }
 
     public boolean isValid(String token) {
-        try {
-            final long currentTime = System.currentTimeMillis();
-            Jws<Claims> claims = Jwts.parser()
-                    .verifyWith(secret)
-                    .build()
-                    .parseSignedClaims(token);
-
-            return claims.getPayload().getExpiration().after(new Date(currentTime));
-        } catch (JwtException e) {
-            throw new AuthenticationException("Invalid token", e);
-        }
+        final long currentTime = System.currentTimeMillis();
+        Jws<Claims> claims = Jwts.parser()
+                .verifyWith(secret)
+                .build()
+                .parseSignedClaims(token);
+        return claims.getPayload().getExpiration().after(new Date(currentTime));
     }
 
     public String getSubject(String token) {
@@ -78,16 +71,11 @@ public class JwtUtil {
     }
 
     private <T> T getClaim(String token, Function<Claims, T> claimResolver) {
-        try {
-            Claims claims = Jwts.parser()
-                    .verifyWith(secret)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-
-            return claimResolver.apply(claims);
-        } catch (JwtException e) {
-            throw new RuntimeException("Failure processing the JWT token");
-        }
+        Claims claims = Jwts.parser()
+                .verifyWith(secret)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claimResolver.apply(claims);
     }
 }
