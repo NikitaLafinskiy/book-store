@@ -1,7 +1,7 @@
 package com.bookstore.service.user;
 
 import com.bookstore.dto.user.UserRegistrationRequestDto;
-import com.bookstore.dto.user.UserResponseDto;
+import com.bookstore.dto.user.UserRegistrationResponseDto;
 import com.bookstore.entity.Role;
 import com.bookstore.entity.User;
 import com.bookstore.exception.RegistrationException;
@@ -23,7 +23,8 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public UserResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto) {
+    public UserRegistrationResponseDto register(UserRegistrationRequestDto
+                                                            userRegistrationRequestDto) {
         if (userRepository.existsByEmail(userRegistrationRequestDto.getEmail())) {
             throw new RegistrationException("User already exists");
         }
