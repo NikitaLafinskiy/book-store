@@ -1,9 +1,9 @@
 package com.bookstore.domain.category.controller;
 
 import com.bookstore.domain.book.dto.BookDto;
+import com.bookstore.domain.book.service.BookService;
 import com.bookstore.domain.category.dto.CategoryDto;
 import com.bookstore.domain.category.dto.CreateCategoryRequestDto;
-import com.bookstore.domain.book.service.BookService;
 import com.bookstore.domain.category.service.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;

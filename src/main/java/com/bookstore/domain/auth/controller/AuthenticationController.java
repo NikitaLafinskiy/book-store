@@ -1,12 +1,12 @@
 package com.bookstore.domain.auth.controller;
 
+import com.bookstore.domain.auth.service.AuthenticationService;
 import com.bookstore.domain.user.dto.UserLoginRequestDto;
 import com.bookstore.domain.user.dto.UserLoginResponseDto;
 import com.bookstore.domain.user.dto.UserRegistrationRequestDto;
 import com.bookstore.domain.user.dto.UserRegistrationResponseDto;
-import com.bookstore.exception.RegistrationException;
-import com.bookstore.domain.auth.service.AuthenticationService;
 import com.bookstore.domain.user.service.UserService;
+import com.bookstore.exception.RegistrationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
