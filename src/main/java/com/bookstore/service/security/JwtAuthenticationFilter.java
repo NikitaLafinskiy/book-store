@@ -1,4 +1,4 @@
-package com.bookstore.service.auth;
+package com.bookstore.service.security;
 
 import com.bookstore.service.token.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -8,16 +8,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Service
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final String TOKEN_HEADER = "Bearer ";
     private final JwtUtil jwtUtil;
 
     @Override
@@ -25,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        String token = extractToken(request);
+        String token = getToken(request);
 
         if (token != null && jwtUtil.isValid(token)) {
             String subject = jwtUtil.getSubject(token);
@@ -41,21 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader != null) {
-            authHeader = authHeader.trim();
-            String[] authHeaderParts = authHeader.split(" ");
-            if (authHeaderParts.length == 2) {
-                String authPrefix = authHeaderParts[0];
-                String authValue = authHeaderParts[1];
-                if (authPrefix.trim().equalsIgnoreCase("Bearer")) {
-                    return authValue;
-                }
-            }
-        }
-
-        return null;
+    private String getToken(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return (StringUtils.hasText(token) && token.startsWith(TOKEN_HEADER))
+                ? token.substring(TOKEN_HEADER.length()) : null;
     }
 }
