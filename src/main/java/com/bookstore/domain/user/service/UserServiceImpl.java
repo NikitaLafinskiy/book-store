@@ -1,15 +1,15 @@
 package com.bookstore.domain.user.service;
 
+import com.bookstore.domain.cart.entity.ShoppingCart;
+import com.bookstore.domain.cart.repository.ShoppingCartRepository;
 import com.bookstore.domain.user.dto.UserRegistrationRequestDto;
 import com.bookstore.domain.user.dto.UserRegistrationResponseDto;
 import com.bookstore.domain.user.entity.Role;
-import com.bookstore.domain.cart.entity.ShoppingCart;
 import com.bookstore.domain.user.entity.User;
-import com.bookstore.exception.RegistrationException;
 import com.bookstore.domain.user.mapper.UserMapper;
 import com.bookstore.domain.user.repository.RoleRepository;
-import com.bookstore.domain.cart.repository.ShoppingCartRepository;
 import com.bookstore.domain.user.repository.UserRepository;
+import com.bookstore.exception.RegistrationException;
 import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;

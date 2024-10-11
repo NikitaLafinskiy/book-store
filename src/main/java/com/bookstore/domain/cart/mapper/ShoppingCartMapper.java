@@ -8,10 +8,9 @@ import com.bookstore.domain.cart.dto.ShoppingCartDto;
 import com.bookstore.domain.cart.dto.UpdateCartRequestDto;
 import com.bookstore.domain.cart.entity.CartItem;
 import com.bookstore.domain.cart.entity.ShoppingCart;
+import com.bookstore.domain.user.mapper.UserMapper;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.bookstore.domain.user.mapper.UserMapper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
