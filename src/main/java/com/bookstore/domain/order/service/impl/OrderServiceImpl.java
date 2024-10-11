@@ -1,5 +1,8 @@
 package com.bookstore.domain.order.service.impl;
 
+import com.bookstore.domain.book.dto.BookPriceProjectionDto;
+import com.bookstore.domain.book.repository.BookRepository;
+import com.bookstore.domain.order.dto.CreateOrderItemRequestDto;
 import com.bookstore.domain.order.dto.CreateOrderRequestDto;
 import com.bookstore.domain.order.dto.OrderDto;
 import com.bookstore.domain.order.dto.UpdateOrderStatusRequestDto;
@@ -20,13 +23,20 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
+    private final BookRepository bookRepository;
 
     @Override
     public OrderDto createOrder(String email, CreateOrderRequestDto createOrderRequestDto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(EntityNotFoundException::new);
+        List<BookPriceProjectionDto> books = bookRepository.findAllByBookIds(
+                createOrderRequestDto.getOrderItems()
+                .stream()
+                .map(CreateOrderItemRequestDto::getBookId)
+                .toList());
         Order order = orderMapper.toOrderFromDto(createOrderRequestDto,
-                user);
+                user,
+                books);
         return orderMapper.toDtoFromOrder(orderRepository.save(order));
     }
 

@@ -1,6 +1,7 @@
 package com.bookstore.domain.book.entity;
 
 import com.bookstore.domain.category.entity.Category;
+import com.bookstore.domain.order.entity.OrderItem;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -56,6 +58,9 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "book")
+    private Set<OrderItem> orderItems = new HashSet<>();
 
     public Book(Long id) {
         this.id = id;

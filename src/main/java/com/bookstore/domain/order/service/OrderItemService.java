@@ -6,5 +6,5 @@ import java.util.List;
 public interface OrderItemService {
     List<OrderItemDto> getOrderItems(Long orderId);
 
-    OrderItemDto getOrderItem(Long orderId, Long orderItemId);
+    OrderItemDto getOrderItem(Long orderItemId);
 }

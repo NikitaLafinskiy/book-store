@@ -4,7 +4,6 @@ import com.bookstore.domain.order.dto.OrderItemDto;
 import com.bookstore.domain.order.service.OrderItemService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,15 +22,13 @@ public class OrderItemController {
     @GetMapping
     public List<OrderItemDto> getOrderItems(@PathVariable("orderId")
                                                 Long orderId) {
-        return null;
+        return orderItemService.getOrderItems(orderId);
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{itemId}")
-    public OrderItemDto getOrderItem(@PathVariable("orderId")
-                                         Long orderId,
-                                     @PathVariable("itemId")
+    public OrderItemDto getOrderItem(@PathVariable("itemId")
                                          Long itemId) {
-        return null;
+        return orderItemService.getOrderItem(itemId);
     }
 }

@@ -1,6 +1,5 @@
 package com.bookstore.domain.order.entity;
 
-import com.bookstore.domain.order.dto.OrderItemDto;
 import com.bookstore.domain.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
