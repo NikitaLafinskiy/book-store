@@ -1,12 +1,4 @@
 package com.bookstore.dto.user;
 
-import lombok.Data;
-
-@Data
-public class UserLoginResponseDto {
-    private String token;
-
-    public UserLoginResponseDto(String token) {
-        this.token = token;
-    }
+public record UserLoginResponseDto(String token) {
 }
