@@ -15,6 +15,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Page<Book> findAllByCategoryId(Pageable pageable, @Param("categoryId") Long categoryId);
 
     @EntityGraph(attributePaths = "categories")
-    @Query("SELECT b FROM Book b")
-    Page<Book> findAllWithCategories(Pageable pageable);
+    Page<Book> findAll(Pageable pageable);
 }
