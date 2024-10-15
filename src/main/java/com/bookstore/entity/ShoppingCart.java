@@ -38,7 +38,6 @@ public class ShoppingCart {
     private User user;
 
     @OneToMany(mappedBy = "shoppingCart",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     private Set<CartItem> cartItems = new HashSet<>();

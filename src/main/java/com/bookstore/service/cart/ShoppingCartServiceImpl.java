@@ -6,6 +6,7 @@ import com.bookstore.dto.cart.ShoppingCartDto;
 import com.bookstore.dto.cart.UpdateCartRequestDto;
 import com.bookstore.entity.CartItem;
 import com.bookstore.entity.ShoppingCart;
+import com.bookstore.mapper.CartItemMapper;
 import com.bookstore.mapper.ShoppingCartMapper;
 import com.bookstore.repository.CartItemRepository;
 import com.bookstore.repository.ShoppingCartRepository;
@@ -19,6 +20,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
     private final CartItemRepository cartItemRepository;
+    private final CartItemMapper cartItemMapper;
 
     @Override
     public ShoppingCartDto getCart(String email) {
@@ -29,7 +31,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto addCartItem(String email, AddBookCartRequestDto addBookCartRequestDto) {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(email);
-        CartItem cartItem = shoppingCartMapper.dtoToCartItem(addBookCartRequestDto);
+        CartItem cartItem = cartItemMapper.toCartItem(addBookCartRequestDto);
         shoppingCart.addCartItem(cartItem);
         shoppingCartRepository.save(shoppingCart);
         return shoppingCartMapper.toDto(shoppingCart);
@@ -39,10 +41,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public CartItemDto updateCartItem(UpdateCartRequestDto updateCartRequestDto,
                                       Long cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(EntityNotFoundException::new);
-        shoppingCartMapper.updateCartItem(updateCartRequestDto, cartItem);
+                .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
+        cartItemMapper.updateCartItem(updateCartRequestDto, cartItem);
         cartItemRepository.save(cartItem);
-        return shoppingCartMapper.cartItemToDto(cartItem);
+        return cartItemMapper.toDto(cartItem);
     }
 
     @Override

@@ -32,9 +32,9 @@ public class ShoppingCartController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ShoppingCartDto addCartItem(@AuthenticationPrincipal String email,
-                                       @RequestBody @Valid
-                                       AddBookCartRequestDto addBookCartRequestDto) {
+    public ShoppingCartDto addCartItem(
+            @AuthenticationPrincipal String email,
+            @RequestBody @Valid AddBookCartRequestDto addBookCartRequestDto) {
         return shoppingCartService.addCartItem(email, addBookCartRequestDto);
     }
 
