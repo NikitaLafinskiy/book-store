@@ -1,16 +1,10 @@
-FROM openjdk AS builder
+FROM maven:3.8.7-openjdk-18 AS build
+COPY src /usr/app/src
+COPY pom.xml /usr/app
+COPY checkstyle.xml /usr/app
+RUN mvn -f /usr/app/pom.xml clean package
 
-WORKDIR /app
-
-COPY . .
-
-RUN mvn clean package
-
-FROM openjdk
-
-WORKDIR /app
-
-COPY --from=builder /app/target/*.jar /app.jar
-COPY --from=builder /app/src/main/resources/application.properties application.properties
-
-CMD ["java", "-jar", "/app.jar"]
+FROM openjdk:18
+COPY --from=build /usr/app/target/book-store-0.0.1-SNAPSHOT.jar /usr/app/book-store-0.0.1-SNAPSHOT.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/usr/app/book-store-0.0.1-SNAPSHOT.jar"]
