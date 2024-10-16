@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: bookstore
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - appnetwork
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - appnetwork
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookstore
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
+networks:
+  appnetwork:
+
+volumes:
+  dbdata:
