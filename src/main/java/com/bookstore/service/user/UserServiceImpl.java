@@ -3,13 +3,12 @@ package com.bookstore.service.user;
 import com.bookstore.dto.user.UserRegistrationRequestDto;
 import com.bookstore.dto.user.UserRegistrationResponseDto;
 import com.bookstore.entity.Role;
-import com.bookstore.entity.ShoppingCart;
 import com.bookstore.entity.User;
 import com.bookstore.exception.RegistrationException;
 import com.bookstore.mapper.UserMapper;
 import com.bookstore.repository.RoleRepository;
-import com.bookstore.repository.ShoppingCartRepository;
 import com.bookstore.repository.UserRepository;
+import com.bookstore.service.cart.ShoppingCartService;
 import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     @Transactional
@@ -37,8 +36,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userRegistrationRequestDto.getPassword()));
         user.setRoles(Set.of(roleRepository.findByRoleName(DEFAULT_ROLE)));
         userRepository.save(user);
-        ShoppingCart shoppingCart = new ShoppingCart(user);
-        shoppingCartRepository.save(shoppingCart);
+        shoppingCartService.createShoppingCart(user);
         return userMapper.toDto(user);
     }
 }

@@ -1,14 +1,10 @@
 package com.bookstore.dto.cart;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
 public class UpdateCartRequestDto {
-    @NotNull
-    @Max(100)
-    @Min(0)
-    private Integer quantity;
+    @Positive
+    private int quantity;
 }

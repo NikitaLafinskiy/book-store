@@ -22,6 +22,7 @@ public class JwtUtil {
     private static final String FIRST_NAME_CLAIM = "firstName";
     private static final String LAST_NAME_CLAIM = "lastName";
     private static final String SHIPPING_CLAIM = "shippingAddress";
+    private static final String EMAIL_CLAIM = "email";
     private final SecretKey secret;
 
     @Value("${jwt.expiration}")
@@ -38,10 +39,11 @@ public class JwtUtil {
         return Jwts.builder()
                 .issuedAt(new Date(currentTime))
                 .expiration(new Date(currentTime + expiration))
-                .subject(principal.getEmail())
+                .subject(String.valueOf(principal.getId()))
                 .claim(AUTHORITIES_CLAIM, payload.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
+                .claim(EMAIL_CLAIM, principal.getEmail())
                 .claim(SHIPPING_CLAIM, principal.getShippingAddress())
                 .claim(FIRST_NAME_CLAIM, principal.getFirstName())
                 .claim(LAST_NAME_CLAIM, principal.getLastName())

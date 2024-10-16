@@ -1,7 +1,6 @@
 package com.bookstore.controller;
 
 import com.bookstore.dto.cart.AddBookCartRequestDto;
-import com.bookstore.dto.cart.CartItemDto;
 import com.bookstore.dto.cart.ShoppingCartDto;
 import com.bookstore.dto.cart.UpdateCartRequestDto;
 import com.bookstore.service.cart.ShoppingCartService;
@@ -28,23 +27,26 @@ public class ShoppingCartController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ShoppingCartDto getCart(@AuthenticationPrincipal String email) {
-        return shoppingCartService.getCart(email);
+    public ShoppingCartDto getCart(@AuthenticationPrincipal String id) {
+        return shoppingCartService.getCart(id);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto addCartItem(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal String id,
             @RequestBody @Valid AddBookCartRequestDto addBookCartRequestDto) {
-        return shoppingCartService.addCartItem(email, addBookCartRequestDto);
+        return shoppingCartService.addCartItem(id, addBookCartRequestDto);
     }
 
     @PutMapping("/items/{cartItemId}")
     @PreAuthorize("hasRole('USER')")
-    public CartItemDto updateCartItem(@RequestBody @Valid UpdateCartRequestDto updateCartRequestDto,
-                                      @PathVariable Long cartItemId) {
-        return shoppingCartService.updateCartItem(updateCartRequestDto,
+    public ShoppingCartDto updateCartItem(
+            @RequestBody @Valid UpdateCartRequestDto updateCartRequestDto,
+            @AuthenticationPrincipal String id,
+            @PathVariable Long cartItemId) {
+        return shoppingCartService.updateCartItem(id,
+                updateCartRequestDto,
                 cartItemId);
     }
 
