@@ -1,6 +1,6 @@
 package com.bookstore.dto.user;
 
-import com.bookstore.validators.FieldMatch;
+import com.bookstore.validator.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
