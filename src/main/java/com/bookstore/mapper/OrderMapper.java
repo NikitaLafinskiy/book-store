@@ -1,19 +1,16 @@
 package com.bookstore.mapper;
 
 import com.bookstore.config.MapperConfig;
-import com.bookstore.dto.book.BookPriceProjectionDto;
-import com.bookstore.dto.order.CreateOrderItemRequestDto;
 import com.bookstore.dto.order.CreateOrderRequestDto;
 import com.bookstore.dto.order.OrderDto;
 import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
+import com.bookstore.entity.CartItem;
 import com.bookstore.entity.Order;
 import com.bookstore.entity.OrderItem;
 import com.bookstore.entity.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
@@ -28,29 +25,15 @@ public interface OrderMapper {
     @Mapping(target = "user", source = "user")
     Order toOrderFromDto(CreateOrderRequestDto createOrderRequestDto,
                          User user,
-                         List<BookPriceProjectionDto> books);
+                         Set<CartItem> cartItems);
 
     @AfterMapping
-    default void setOrderItems(CreateOrderRequestDto createOrderRequestDto,
-                               List<BookPriceProjectionDto> books,
+    default void setOrderItems(Set<CartItem> cartItems,
                                @MappingTarget Order order) {
-        Map<Long, BigDecimal> bookPrices = books.stream()
-                .collect(Collectors.toMap(BookPriceProjectionDto::id,
-                        BookPriceProjectionDto::price));
-
-        Set<OrderItem> orderItems = createOrderRequestDto.getOrderItems()
-                .stream()
-                .map(createOrderItemRequestDto -> {
-                    OrderItem orderItem = toOrderItemFromDto(createOrderItemRequestDto);
+        Set<OrderItem> orderItems = cartItems.stream()
+                .map(cartItem -> {
+                    OrderItem orderItem = toOrderItemFromCartItem(cartItem);
                     orderItem.setOrder(order);
-                    BigDecimal price = bookPrices.get(orderItem.getBook()
-                            .getId());
-                    if (price == null) {
-                        throw new IllegalArgumentException("Book price not found for book "
-                                + orderItem.getBook()
-                                .getId());
-                    }
-                    orderItem.setPrice(price);
                     return orderItem;
                 })
                 .collect(Collectors.toSet());
@@ -65,8 +48,8 @@ public interface OrderMapper {
         order.setOrderItems(orderItems);
     }
 
-    @Mapping(target = "book", source = "bookId", qualifiedByName = "bookById")
-    OrderItem toOrderItemFromDto(CreateOrderItemRequestDto createOrderItemRequestDto);
+    @Mapping(target = "price", source = "cartItem.book.price")
+    OrderItem toOrderItemFromCartItem(CartItem cartItem);
 
     @Mapping(target = "orderItems", ignore = true)
     @Mapping(target = "userId", source = "user.id")

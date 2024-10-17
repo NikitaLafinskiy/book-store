@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = "orderItems")
-    @Query("select o from Order o where o.user.email = :email")
-    List<Order> findByUserEmail(@Param("email") String email);
+    @Query("select o from Order o where o.user.id = :id")
+    List<Order> findAllByUserId(@Param("id") String id);
 
     @EntityGraph(attributePaths = "orderItems")
-    @Query("select o from Order o where o.id = :id")
-    Optional<Order> findByIdWithOrderItems(Long id);
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.id = :orderId")
+    Optional<Order> findByIdAndUserId(Long userId, Long orderId);
 }

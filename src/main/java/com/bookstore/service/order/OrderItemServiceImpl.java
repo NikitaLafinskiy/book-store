@@ -19,8 +19,8 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final OrderMapper orderMapper;
 
     @Override
-    public List<OrderItemDto> getOrderItems(Long orderId) {
-        Order order = orderRepository.findByIdWithOrderItems(orderId)
+    public List<OrderItemDto> getOrderItems(Long orderId, String userId) {
+        Order order = orderRepository.findByIdAndUserId(orderId, Long.valueOf(userId))
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
         return order.getOrderItems()
                 .stream()
@@ -29,8 +29,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public OrderItemDto getOrderItem(Long orderItemId) {
-        OrderItem orderItem = orderItemRepository.findById(orderItemId)
+    public OrderItemDto getOrderItem(Long orderItemId, Long orderId, String userId) {
+        OrderItem orderItem = orderItemRepository.findByIdAndOrderIdAndUserId(orderItemId,
+                        orderId,
+                        Long.valueOf(userId))
                 .orElseThrow(() -> new EntityNotFoundException("Order item not found"));
         return orderMapper.toDtoFromOrderItem(orderItem);
     }

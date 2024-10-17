@@ -1,17 +1,17 @@
 package com.bookstore.service.order;
 
-import com.bookstore.dto.book.BookPriceProjectionDto;
-import com.bookstore.dto.order.CreateOrderItemRequestDto;
 import com.bookstore.dto.order.CreateOrderRequestDto;
 import com.bookstore.dto.order.OrderDto;
 import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
 import com.bookstore.entity.Order;
+import com.bookstore.entity.ShoppingCart;
 import com.bookstore.entity.User;
 import com.bookstore.mapper.OrderMapper;
-import com.bookstore.repository.BookRepository;
+import com.bookstore.repository.CartItemRepository;
 import com.bookstore.repository.OrderRepository;
-import com.bookstore.repository.UserRepository;
+import com.bookstore.repository.ShoppingCartRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,28 +20,36 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final OrderMapper orderMapper;
-    private final BookRepository bookRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Override
-    public OrderDto createOrder(String email, CreateOrderRequestDto createOrderRequestDto) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(EntityNotFoundException::new);
-        List<BookPriceProjectionDto> books = bookRepository.findAllByBookIds(
-                createOrderRequestDto.getOrderItems()
-                .stream()
-                .map(CreateOrderItemRequestDto::getBookId)
-                .toList());
+    @Transactional
+    public OrderDto createOrder(String userId, CreateOrderRequestDto createOrderRequestDto) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new EntityNotFoundException(
+                "Shopping cart with an id of "
+                        + userId
+                        + "not found"));
+        if (shoppingCart.getCartItems().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Shopping cart with an id of "
+                    + userId
+                    + "is empty");
+        }
+        User user = shoppingCart.getUser();
         Order order = orderMapper.toOrderFromDto(createOrderRequestDto,
                 user,
-                books);
-        return orderMapper.toDtoFromOrder(orderRepository.save(order));
+                shoppingCart.getCartItems());
+        OrderDto orderDto = orderMapper.toDtoFromOrder(orderRepository.save(order));
+        cartItemRepository.deleteAll(shoppingCart.getCartItems());
+        return orderDto;
     }
 
     @Override
-    public List<OrderDto> getOrderHistory(String email) {
-        List<Order> orders = orderRepository.findByUserEmail(email);
+    public List<OrderDto> getOrderHistory(String userId) {
+        List<Order> orders = orderRepository.findAllByUserId(userId);
         return orders.stream()
                 .map(orderMapper::toDtoFromOrder)
                 .toList();

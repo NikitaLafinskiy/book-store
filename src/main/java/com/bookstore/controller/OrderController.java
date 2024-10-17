@@ -2,8 +2,12 @@ package com.bookstore.controller;
 
 import com.bookstore.dto.order.CreateOrderRequestDto;
 import com.bookstore.dto.order.OrderDto;
+import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
+import com.bookstore.service.order.OrderItemService;
 import com.bookstore.service.order.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -24,26 +28,60 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final OrderItemService orderItemService;
 
+    @Operation(summary = "Create a new order", responses = {
+            @ApiResponse(responseCode = "200", description = "Order created successfully")
+    })
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public OrderDto createOrder(@AuthenticationPrincipal String email,
+    public OrderDto createOrder(@AuthenticationPrincipal String id,
                                 @RequestBody @Valid
                                         CreateOrderRequestDto createOrderRequestDto) {
-        return orderService.createOrder(email, createOrderRequestDto);
+        return orderService.createOrder(id, createOrderRequestDto);
     }
 
+    @Operation(summary = "Get order history", responses = {
+            @ApiResponse(responseCode = "200", description = "Order history retrieved successfully")
+    })
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public List<OrderDto> getOrderHistory(@AuthenticationPrincipal String email) {
-        return orderService.getOrderHistory(email);
+    public List<OrderDto> getOrderHistory(@AuthenticationPrincipal String id) {
+        return orderService.getOrderHistory(id);
     }
 
+    @Operation(summary = "Update order status", responses = {
+            @ApiResponse(responseCode = "200", description = "Order status updated successfully")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public OrderDto updateOrderStatus(@PathVariable("id") Long orderId,
                                       @RequestBody @Valid
                                       UpdateOrderStatusRequestDto updateOrderStatusRequestDto) {
         return orderService.updateOrderStatus(orderId, updateOrderStatusRequestDto);
+    }
+
+    @Operation(summary = "Get all order items", responses = {
+            @ApiResponse(responseCode = "200", description = "Order items retrieved successfully")
+    })
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{orderId}/items")
+    public List<OrderItemDto> getOrderItems(
+            @PathVariable("orderId") Long orderId,
+            @AuthenticationPrincipal String id) {
+        return orderItemService.getOrderItems(orderId, id);
+    }
+
+    @Operation(summary = "Get an order item by ID", responses = {
+            @ApiResponse(responseCode = "200", description = "Order item retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Order item not found")
+    })
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{orderId}/items/{itemId}")
+    public OrderItemDto getOrderItem(
+            @PathVariable("itemId") Long itemId,
+            @PathVariable("orderId") Long orderId,
+            @AuthenticationPrincipal String id) {
+        return orderItemService.getOrderItem(itemId, orderId, id);
     }
 }

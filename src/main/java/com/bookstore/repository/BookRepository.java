@@ -1,8 +1,6 @@
 package com.bookstore.repository;
 
-import com.bookstore.dto.book.BookPriceProjectionDto;
 import com.bookstore.entity.Book;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -18,8 +16,4 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @EntityGraph(attributePaths = "categories")
     Page<Book> findAll(Pageable pageable);
-
-    @Query("select new com.bookstore.dto.book.BookPriceProjectionDto(b.id, b.price) "
-            + "from Book b where b.id in :bookIds")
-    List<BookPriceProjectionDto> findAllByBookIds(List<Long> bookIds);
 }

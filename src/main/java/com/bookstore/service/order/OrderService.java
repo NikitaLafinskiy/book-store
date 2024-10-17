@@ -6,9 +6,9 @@ import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
 import java.util.List;
 
 public interface OrderService {
-    OrderDto createOrder(String email, CreateOrderRequestDto createOrderRequestDto);
+    OrderDto createOrder(String userId, CreateOrderRequestDto createOrderRequestDto);
 
-    List<OrderDto> getOrderHistory(String email);
+    List<OrderDto> getOrderHistory(String userId);
 
     OrderDto updateOrderStatus(Long orderId,
                                UpdateOrderStatusRequestDto updateOrderStatusRequestDto);
