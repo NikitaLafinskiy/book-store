@@ -72,7 +72,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderItemDto> getOrderItems(Long orderId, Long userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new com.bookstore.exception.EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new com.bookstore.exception.EntityNotFoundException(
+                        "Order not found"));
         return order.getOrderItems()
                 .stream()
                 .map(orderMapper::toDtoFromOrderItem)
@@ -84,7 +85,8 @@ public class OrderServiceImpl implements OrderService {
         OrderItem orderItem = orderItemRepository.findByIdAndOrderIdAndUserId(orderItemId,
                         orderId,
                         userId)
-                .orElseThrow(() -> new com.bookstore.exception.EntityNotFoundException("Order item not found"));
+                .orElseThrow(() -> new com.bookstore.exception.EntityNotFoundException(
+                        "Order item not found"));
         return orderMapper.toDtoFromOrderItem(orderItem);
     }
 }
