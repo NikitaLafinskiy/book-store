@@ -23,8 +23,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemMapper cartItemMapper;
 
     @Override
-    public ShoppingCartDto getCart(String id) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(Long.valueOf(id))
+    public ShoppingCartDto getCart(Long id) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart for the user with an id of "
                         + id
@@ -33,8 +33,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartDto addCartItem(String id, AddBookCartRequestDto addBookCartRequestDto) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(Long.valueOf(id))
+    public ShoppingCartDto addCartItem(Long id, AddBookCartRequestDto addBookCartRequestDto) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart for the user with an id of "
                         + id
@@ -52,10 +52,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartDto updateCartItem(String id,
+    public ShoppingCartDto updateCartItem(Long id,
                                           UpdateCartRequestDto updateCartRequestDto,
                                           Long cartItemId) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(Long.valueOf(id))
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart for the user with an id of "
                         + id

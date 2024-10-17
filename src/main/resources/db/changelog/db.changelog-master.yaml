@@ -11,3 +11,5 @@ databaseChangeLog:
       file: classpath:db/changelog/changes/05-create-cart-table.yaml
   - include:
       file: classpath:db/changelog/changes/06-create-cart-items-table.yaml
+  - include:
+      file: classpath:db/changelog/changes/07-create-order-table.yaml
