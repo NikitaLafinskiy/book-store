@@ -27,14 +27,14 @@ public class ShoppingCartController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ShoppingCartDto getCart(@AuthenticationPrincipal String id) {
+    public ShoppingCartDto getCart(@AuthenticationPrincipal Long id) {
         return shoppingCartService.getCart(id);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto addCartItem(
-            @AuthenticationPrincipal String id,
+            @AuthenticationPrincipal Long id,
             @RequestBody @Valid AddBookCartRequestDto addBookCartRequestDto) {
         return shoppingCartService.addCartItem(id, addBookCartRequestDto);
     }
@@ -43,7 +43,7 @@ public class ShoppingCartController {
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto updateCartItem(
             @RequestBody @Valid UpdateCartRequestDto updateCartRequestDto,
-            @AuthenticationPrincipal String id,
+            @AuthenticationPrincipal Long id,
             @PathVariable Long cartItemId) {
         return shoppingCartService.updateCartItem(id,
                 updateCartRequestDto,

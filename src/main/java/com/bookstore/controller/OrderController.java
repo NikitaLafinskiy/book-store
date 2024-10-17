@@ -4,7 +4,6 @@ import com.bookstore.dto.order.CreateOrderRequestDto;
 import com.bookstore.dto.order.OrderDto;
 import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
-import com.bookstore.service.order.OrderItemService;
 import com.bookstore.service.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,14 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    private final OrderItemService orderItemService;
 
     @Operation(summary = "Create a new order", responses = {
             @ApiResponse(responseCode = "200", description = "Order created successfully")
     })
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public OrderDto createOrder(@AuthenticationPrincipal String id,
+    public OrderDto createOrder(@AuthenticationPrincipal Long id,
                                 @RequestBody @Valid
                                         CreateOrderRequestDto createOrderRequestDto) {
         return orderService.createOrder(id, createOrderRequestDto);
@@ -46,7 +44,7 @@ public class OrderController {
     })
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public List<OrderDto> getOrderHistory(@AuthenticationPrincipal String id) {
+    public List<OrderDto> getOrderHistory(@AuthenticationPrincipal Long id) {
         return orderService.getOrderHistory(id);
     }
 
@@ -68,8 +66,8 @@ public class OrderController {
     @GetMapping("/{orderId}/items")
     public List<OrderItemDto> getOrderItems(
             @PathVariable("orderId") Long orderId,
-            @AuthenticationPrincipal String id) {
-        return orderItemService.getOrderItems(orderId, id);
+            @AuthenticationPrincipal Long id) {
+        return orderService.getOrderItems(orderId, id);
     }
 
     @Operation(summary = "Get an order item by ID", responses = {
@@ -81,7 +79,7 @@ public class OrderController {
     public OrderItemDto getOrderItem(
             @PathVariable("itemId") Long itemId,
             @PathVariable("orderId") Long orderId,
-            @AuthenticationPrincipal String id) {
-        return orderItemService.getOrderItem(itemId, orderId, id);
+            @AuthenticationPrincipal Long id) {
+        return orderService.getOrderItem(itemId, orderId, id);
     }
 }
