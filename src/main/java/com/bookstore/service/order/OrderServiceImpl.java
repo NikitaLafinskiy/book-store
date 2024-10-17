@@ -42,8 +42,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.toOrderFromDto(createOrderRequestDto,
                 user,
                 shoppingCart.getCartItems());
-        OrderDto orderDto = orderMapper.toDtoFromOrder(orderRepository.save(order));
-        cartItemRepository.deleteAll(shoppingCart.getCartItems());
+        orderRepository.save(order);
+        OrderDto orderDto = orderMapper.toDtoFromOrder(order);
+        cartItemRepository.deleteByShoppingCartId(shoppingCart.getId());
         return orderDto;
     }
 

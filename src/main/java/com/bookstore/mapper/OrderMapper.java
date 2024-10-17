@@ -10,7 +10,6 @@ import com.bookstore.entity.Order;
 import com.bookstore.entity.OrderItem;
 import com.bookstore.entity.User;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
@@ -42,9 +41,7 @@ public interface OrderMapper {
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        order.setStatus(Order.Status.PENDING);
         order.setTotal(total);
-        order.setOrderDate(LocalDateTime.now());
         order.setOrderItems(orderItems);
     }
 

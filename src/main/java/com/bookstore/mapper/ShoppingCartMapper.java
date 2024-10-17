@@ -12,7 +12,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = MapperConfig.class, uses = { UserMapper.class, CartItemMapper.class })
+@Mapper(config = MapperConfig.class, uses = { UserMapper.class, BookMapper.class })
 public interface ShoppingCartMapper {
     @Mapping(target = "cartItems", ignore = true)
     @Mapping(target = "userId", source = "user.id")
@@ -42,7 +42,10 @@ public interface ShoppingCartMapper {
         shoppingCart.setCartItems(cartItems);
     }
 
+    @Mapping(target = "bookId", source = "book.id")
+    @Mapping(target = "bookTitle", source = "book.title")
     CartItemDto toCartItemDto(CartItem cartItem);
 
+    @Mapping(target = "book", source = "bookId", qualifiedByName = "bookById")
     CartItem toCartItem(CartItemDto cartItemDto);
 }
