@@ -7,11 +7,11 @@ import com.bookstore.entity.ShoppingCart;
 import com.bookstore.entity.User;
 
 public interface ShoppingCartService {
-    ShoppingCartDto getCart(String id);
+    ShoppingCartDto getCart(Long id);
 
-    ShoppingCartDto addCartItem(String id, AddBookCartRequestDto addBookCartRequestDto);
+    ShoppingCartDto addCartItem(Long id, AddBookCartRequestDto addBookCartRequestDto);
 
-    ShoppingCartDto updateCartItem(String id,
+    ShoppingCartDto updateCartItem(Long id,
                                    UpdateCartRequestDto updateCartRequestDto,
                                    Long cartItemId);
 

@@ -11,38 +11,41 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(config = MapperConfig.class, uses = { UserMapper.class, CartItemMapper.class })
-public abstract class ShoppingCartMapper {
-    @Autowired
-    private CartItemMapper cartItemMapper;
-
+@Mapper(config = MapperConfig.class, uses = { UserMapper.class, BookMapper.class })
+public interface ShoppingCartMapper {
     @Mapping(target = "cartItems", ignore = true)
     @Mapping(target = "userId", source = "user.id")
-    public abstract ShoppingCartDto toDto(ShoppingCart shoppingCart);
+    ShoppingCartDto toDto(ShoppingCart shoppingCart);
 
     @AfterMapping
-    private void setCartItemDtos(ShoppingCart shoppingCart,
+    default void setCartItemDtos(ShoppingCart shoppingCart,
                                  @MappingTarget ShoppingCartDto shoppingCartDto) {
         Set<CartItemDto> cartItemDtos = shoppingCart.getCartItems()
                 .stream()
-                .map(cartItemMapper::toDto)
+                .map(this::toCartItemDto)
                 .collect(Collectors.toSet());
         shoppingCartDto.setCartItems(cartItemDtos);
     }
 
     @Mapping(target = "cartItems", ignore = true)
     @Mapping(target = "user", source = "userId", qualifiedByName = "userById")
-    public abstract ShoppingCart toEntity(ShoppingCartDto shoppingCartDto);
+    ShoppingCart toEntity(ShoppingCartDto shoppingCartDto);
 
     @AfterMapping
-    private void setCartItems(ShoppingCartDto shoppingCartDto,
+    default void setCartItems(ShoppingCartDto shoppingCartDto,
                               @MappingTarget ShoppingCart shoppingCart) {
         Set<CartItem> cartItems = shoppingCartDto.getCartItems()
                 .stream()
-                .map(cartItemMapper::toCartItem)
+                .map(this::toCartItem)
                 .collect(Collectors.toSet());
         shoppingCart.setCartItems(cartItems);
     }
+
+    @Mapping(target = "bookId", source = "book.id")
+    @Mapping(target = "bookTitle", source = "book.title")
+    CartItemDto toCartItemDto(CartItem cartItem);
+
+    @Mapping(target = "book", source = "bookId", qualifiedByName = "bookById")
+    CartItem toCartItem(CartItemDto cartItemDto);
 }
