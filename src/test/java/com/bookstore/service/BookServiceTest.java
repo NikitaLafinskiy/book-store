@@ -24,7 +24,6 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
     private final static Long VALID_BOOK_ID = 1L;
-    private final static Integer PAGE_SIZE = 1;
 
     @Mock
     private BookRepository bookRepository;
