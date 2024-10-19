@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - ${HOST_DB_PORT}:${CONTAINER_DB_PORT}
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - appnetwork
+
+  app:
+    build: .
+    ports:
+      - ${HOST_APP_PORT}:${CONTAINER_APP_PORT}
+    networks:
+      - appnetwork
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${DEBUG_PORT}
+
+networks:
+  appnetwork:
+
+volumes:
+  dbdata:
