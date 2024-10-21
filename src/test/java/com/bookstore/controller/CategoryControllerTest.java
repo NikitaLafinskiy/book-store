@@ -23,6 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+import static com.bookstore.util.TestUtil.bootstrapCategoryDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,12 +38,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @Sql(scripts = {"classpath:/database/books/delete-all-books-and-categories.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class CategoryControllerTest {
-    @Container
-    private static final BookstoreMySqlContainer container = BookstoreMySqlContainer.getInstance();
-
     private static MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext context) {
@@ -62,7 +61,7 @@ public class CategoryControllerTest {
     @WithMockUser(username = "user")
     public void findAll_called_returnListOfCategoryDtos() throws Exception {
         // Given
-        CategoryDto categoryDto = TestUtil.bootstrapCategoryDto();
+        CategoryDto categoryDto = bootstrapCategoryDto();
         List<CategoryDto> expected = List.of(categoryDto);
 
         // When
@@ -92,7 +91,7 @@ public class CategoryControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void createCategory_validRequest_returnCategoryDto() throws Exception {
         // Given
-        CategoryDto expected = TestUtil.bootstrapCategoryDto();
+        CategoryDto expected = bootstrapCategoryDto();
         CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto()
                 .setName(expected.getName())
                 .setDescription(expected.getDescription());

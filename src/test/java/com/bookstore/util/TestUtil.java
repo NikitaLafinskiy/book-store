@@ -62,7 +62,9 @@ public class TestUtil {
     public static Category bootstrapCategory() {
         Category category = new Category();
         category.setId(CATEGORY_ID);
-        category.setDescription("Fantasy is a genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore.");
+        category.setDescription("Fantasy is a genre of "
+                + "speculative fiction set in a fictional universe, "
+                + "often inspired by real world myth and folklore.");
         category.setName("Fantasy");
 
         return category;
@@ -71,7 +73,9 @@ public class TestUtil {
     public static CategoryDto bootstrapCategoryDto() {
         CategoryDto category = new CategoryDto();
         category.setId(CATEGORY_ID);
-        category.setDescription("Fantasy is a genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore.");
+        category.setDescription("Fantasy is a genre of "
+                + "speculative fiction set in a fictional universe, "
+                + "often inspired by real world myth and folklore.");
         category.setName("Fantasy");
 
         return category;

@@ -26,6 +26,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.bookstore.util.TestUtil.bootstrapBookDtoList;
+import static com.bookstore.util.TestUtil.compareTruncatedRoundedDecimals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,10 +49,8 @@ public class BookControllerTest {
 
     private static MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Container
-    private static final BookstoreMySqlContainer container = BookstoreMySqlContainer.getInstance();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext context) {
@@ -106,7 +106,7 @@ public class BookControllerTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void findAll_validRole_returnListOfBookDtos() throws Exception {
         // Given
-        List<BookDto> expected = TestUtil.bootstrapBookDtoList();
+        List<BookDto> expected = bootstrapBookDtoList();
 
         // When
         MvcResult result = mockMvc.perform(get("/books").contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -125,7 +125,7 @@ public class BookControllerTest {
                     "id",
                     "description",
                     "price"));
-            assertTrue(TestUtil.compareTruncatedRoundedDecimals(expectedBook.getPrice(), actualBook.getPrice()));
+            assertTrue(compareTruncatedRoundedDecimals(expectedBook.getPrice(), actualBook.getPrice()));
             assertEquals(expectedBook.getCategoryIds().size(), actualBook.getCategoryIds().size());
         }
     }
@@ -146,6 +146,35 @@ public class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertInstanceOf(EntityNotFoundException.class, result.getResolvedException()));
+
+        // Then
+    }
+
+    @Test
+    @DisplayName(
+            """
+            Given an invalid book dto
+            When a POST request is sent to /api/books
+            Then return a 400 Bad Request
+            """
+    )
+    @WithMockUser(username = "user", roles = {"ADMIN"})
+    public void save_invalidUser_returnForbidden() throws Exception {
+        // Given
+        String invalidIsbn = "99999999";
+        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto()
+                .setIsbn(invalidIsbn)
+                .setAuthor(VALID_BOOK_AUTHOR)
+                .setTitle(VALID_BOOK_TITLE)
+                .setPrice(VALID_BOOK_PRICE);
+        String jsonRequest = objectMapper.writeValueAsString(createBookRequestDto);
+
+        // When
+        mockMvc.perform(post(
+                "/books"
+        ).content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
 
         // Then
     }

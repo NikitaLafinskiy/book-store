@@ -18,6 +18,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.bookstore.util.TestUtil.bootstrapBookList;
+import static com.bookstore.util.TestUtil.compareTruncatedRoundedDecimals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
@@ -31,8 +36,9 @@ import java.util.List;
 public class BookRepositoryTest {
     private static final Long CATEGORY_ID = 1L;
 
-    @Container
-    private static final BookstoreMySqlContainer container = BookstoreMySqlContainer.getInstance();
+    static {
+        BookstoreMySqlContainer.getInstance();
+    }
 
     @Autowired
     private BookRepository bookRepository;
@@ -45,22 +51,22 @@ public class BookRepositoryTest {
             """)
     public void findAllByCategoryId_twoBooksInDatabase_returnAll() {
         // Given
-        List<Book> booksList = TestUtil.bootstrapBookList();
+        List<Book> booksList = bootstrapBookList();
 
         // When
         Page<Book> result = bookRepository.findAllByCategoryId(Pageable.unpaged(), CATEGORY_ID);
 
         // Then
         List<Book> actual = result.getContent();
-        Assertions.assertEquals(actual.size(), 2);
+        assertEquals(actual.size(), 2);
         for (int i = 0; i < actual.size(); i++) {
             Book actualBook = actual.get(i);
             Book expectedBook = booksList.get(i);
-            Assertions.assertEquals(expectedBook.getTitle(), actualBook.getTitle());
-            Assertions.assertTrue(TestUtil.compareTruncatedRoundedDecimals(expectedBook.getPrice(), actualBook.getPrice()));
-            Assertions.assertEquals(expectedBook.getAuthor(), actualBook.getAuthor());
-            Assertions.assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
-            Assertions.assertEquals(expectedBook.getCategories().size(), actualBook.getCategories().size());
+            assertEquals(expectedBook.getTitle(), actualBook.getTitle());
+            assertTrue(compareTruncatedRoundedDecimals(expectedBook.getPrice(), actualBook.getPrice()));
+            assertEquals(expectedBook.getAuthor(), actualBook.getAuthor());
+            assertEquals(expectedBook.getIsbn(), actualBook.getIsbn());
+            assertEquals(expectedBook.getCategories().size(), actualBook.getCategories().size());
         }
     }
 }

@@ -21,6 +21,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
     private final static Long VALID_BOOK_ID = 1L;
@@ -45,17 +51,17 @@ public class BookServiceTest {
         BookDto expected = new BookDto();
 
         // When
-        Mockito.when(bookMapper.toEntity(createBookRequestDto)).thenReturn(book);
-        Mockito.when(bookRepository.save(book)).thenReturn(book);
-        Mockito.when(bookMapper.toDto(book)).thenReturn(expected);
+        when(bookMapper.toEntity(createBookRequestDto)).thenReturn(book);
+        when(bookRepository.save(book)).thenReturn(book);
+        when(bookMapper.toDto(book)).thenReturn(expected);
         BookDto actual = bookService.save(createBookRequestDto);
 
         // Then
-        Assertions.assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).save(book);
-        Mockito.verify(bookMapper, Mockito.times(1)).toEntity(createBookRequestDto);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(book);
-        Mockito.verifyNoMoreInteractions(bookRepository);
+        assertEquals(expected, actual);
+        verify(bookRepository, Mockito.times(1)).save(book);
+        verify(bookMapper, Mockito.times(1)).toEntity(createBookRequestDto);
+        verify(bookMapper, Mockito.times(1)).toDto(book);
+        verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
@@ -68,14 +74,14 @@ public class BookServiceTest {
         BookDto expected = new BookDto();
 
         // When
-        Mockito.when(bookRepository.findById(VALID_BOOK_ID)).thenReturn(Optional.of(book));
-        Mockito.when(bookMapper.toDto(book)).thenReturn(expected);
+        when(bookRepository.findById(VALID_BOOK_ID)).thenReturn(Optional.of(book));
+        when(bookMapper.toDto(book)).thenReturn(expected);
         BookDto actual = bookService.findById(VALID_BOOK_ID);
 
         // Then
-        Assertions.assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).findById(VALID_BOOK_ID);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(book);
+        assertEquals(expected, actual);
+        verify(bookRepository, Mockito.times(1)).findById(VALID_BOOK_ID);
+        verify(bookMapper, Mockito.times(1)).toDto(book);
     }
 
     @Test
@@ -94,16 +100,16 @@ public class BookServiceTest {
         List<BookDto> expected = List.of(firstBookDto, secondBookDto);
 
         // When
-        Mockito.when(bookRepository.findAll(pageable)).thenReturn(bookPage);
-        Mockito.when(bookMapper.toDto(firstBook)).thenReturn(firstBookDto);
-        Mockito.when(bookMapper.toDto(secondBook)).thenReturn(secondBookDto);
+        when(bookRepository.findAll(pageable)).thenReturn(bookPage);
+        when(bookMapper.toDto(firstBook)).thenReturn(firstBookDto);
+        when(bookMapper.toDto(secondBook)).thenReturn(secondBookDto);
         List<BookDto> actual = bookService.findAll(pageable);
 
         // Then
-        Assertions.assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).findAll(pageable);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(firstBook);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(secondBook);
+        assertEquals(expected, actual);
+        verify(bookRepository, Mockito.times(1)).findAll(pageable);
+        verify(bookMapper, Mockito.times(1)).toDto(firstBook);
+        verify(bookMapper, Mockito.times(1)).toDto(secondBook);
     }
 
     @Test
@@ -117,18 +123,18 @@ public class BookServiceTest {
         BookDto expected = new BookDto();
 
         // When
-        Mockito.when(bookRepository.findById(VALID_BOOK_ID)).thenReturn(Optional.of(book));
-        Mockito.doNothing().when(bookMapper).updateBookFromDto(createBookRequestDto, book);
-        Mockito.when(bookRepository.save(book)).thenReturn(book);
-        Mockito.when(bookMapper.toDto(book)).thenReturn(expected);
+        when(bookRepository.findById(VALID_BOOK_ID)).thenReturn(Optional.of(book));
+        doNothing().when(bookMapper).updateBookFromDto(createBookRequestDto, book);
+        when(bookRepository.save(book)).thenReturn(book);
+        when(bookMapper.toDto(book)).thenReturn(expected);
         BookDto actual = bookService.updateById(VALID_BOOK_ID, createBookRequestDto);
 
         // Then
-        Assertions.assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).findById(VALID_BOOK_ID);
-        Mockito.verify(bookMapper, Mockito.times(1)).updateBookFromDto(createBookRequestDto, book);
-        Mockito.verify(bookRepository, Mockito.times(1)).save(book);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(book);
+        assertEquals(expected, actual);
+        verify(bookRepository, Mockito.times(1)).findById(VALID_BOOK_ID);
+        verify(bookMapper, Mockito.times(1)).updateBookFromDto(createBookRequestDto, book);
+        verify(bookRepository, Mockito.times(1)).save(book);
+        verify(bookMapper, Mockito.times(1)).toDto(book);
     }
 
     @Test
@@ -147,15 +153,15 @@ public class BookServiceTest {
         List<BookDto> expected = List.of(firstBookDto, secondBookDto);
 
         // When
-        Mockito.when(bookRepository.findAllByCategoryId(pageable, VALID_BOOK_ID)).thenReturn(bookPage);
-        Mockito.when(bookMapper.toDto(firstBook)).thenReturn(firstBookDto);
-        Mockito.when(bookMapper.toDto(secondBook)).thenReturn(secondBookDto);
+        when(bookRepository.findAllByCategoryId(pageable, VALID_BOOK_ID)).thenReturn(bookPage);
+        when(bookMapper.toDto(firstBook)).thenReturn(firstBookDto);
+        when(bookMapper.toDto(secondBook)).thenReturn(secondBookDto);
         List<BookDto> actual = bookService.getBooksByCategoryId(VALID_BOOK_ID, pageable);
 
         // Then
-        Assertions.assertEquals(expected, actual);
-        Mockito.verify(bookRepository, Mockito.times(1)).findAllByCategoryId(pageable, VALID_BOOK_ID);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(firstBook);
-        Mockito.verify(bookMapper, Mockito.times(1)).toDto(secondBook);
+        assertEquals(expected, actual);
+        verify(bookRepository, Mockito.times(1)).findAllByCategoryId(pageable, VALID_BOOK_ID);
+        verify(bookMapper, Mockito.times(1)).toDto(firstBook);
+        verify(bookMapper, Mockito.times(1)).toDto(secondBook);
     }
 }
