@@ -1,10 +1,13 @@
 package com.bookstore.dto.book;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class BookDto {
     private Long id;
     private String title;
@@ -13,5 +16,5 @@ public class BookDto {
     private String isbn;
     private String description;
     private String coverImage;
-    private Set<Long> categoryIds;
+    private Set<Long> categoryIds = new HashSet<>();
 }

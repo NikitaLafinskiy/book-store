@@ -16,5 +16,5 @@ public interface BookService {
 
     void deleteById(Long id);
 
-    List<BookDto> getBooksByCategoryIds(Long id, Pageable pageable);
+    List<BookDto> getBooksByCategoryId(Long id, Pageable pageable);
 }
