@@ -1,14 +1,21 @@
 package com.bookstore.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import com.bookstore.dto.book.BookDto;
 import com.bookstore.dto.book.CreateBookRequestDto;
 import com.bookstore.entity.Book;
 import com.bookstore.mapper.BookMapper;
 import com.bookstore.repository.BookRepository;
 import com.bookstore.service.book.BookServiceImpl;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,18 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
-    private final static Long VALID_BOOK_ID = 1L;
+    private static final Long VALID_BOOK_ID = 1L;
 
     @Mock
     private BookRepository bookRepository;
@@ -42,8 +40,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("""
-        Given a valid request save the book and return a Book DTO
-        """)
+            Given a valid request save the book and return a Book DTO
+            """)
     public void save_validRequest_returnBookDto() {
         // Given
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
@@ -66,8 +64,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("""
-        Given a valid book id return a Book DTO
-        """)
+            Given a valid book id return a Book DTO
+            """)
     public void findById_validId_returnBookDto() {
         // Given
         Book book = new Book(VALID_BOOK_ID);
@@ -86,8 +84,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("""
-        Find all books and return a list of Book DTOs
-        """)
+            Find all books and return a list of Book DTOs
+            """)
     public void findAll_validPageable_returnBookDtoList() {
         // Given
         Book firstBook = new Book();
@@ -97,7 +95,7 @@ public class BookServiceTest {
         Pageable pageable = Pageable.ofSize(1);
         BookDto firstBookDto = new BookDto();
         BookDto secondBookDto = new BookDto();
-        List<BookDto> expected = List.of(firstBookDto, secondBookDto);
+        final List<BookDto> expected = List.of(firstBookDto, secondBookDto);
 
         // When
         when(bookRepository.findAll(pageable)).thenReturn(bookPage);
@@ -114,8 +112,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("""
-        Given a valid book id and request update the book and return a Book DTO
-        """)
+            Given a valid book id and request update the book and return a Book DTO
+            """)
     public void updateById_validId_returnBookDto() {
         // Given
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
@@ -139,8 +137,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("""
-        Given a valid category id and pageable return a list of Book DTOs
-        """)
+            Given a valid category id and pageable return a list of Book DTOs
+            """)
     public void getBooksByCategoryId_validCategoryIdAndPageable_returnBookDtoList() {
         // Given
         Book firstBook = new Book();
@@ -150,7 +148,7 @@ public class BookServiceTest {
         Pageable pageable = Pageable.ofSize(1);
         BookDto firstBookDto = new BookDto();
         BookDto secondBookDto = new BookDto();
-        List<BookDto> expected = List.of(firstBookDto, secondBookDto);
+        final List<BookDto> expected = List.of(firstBookDto, secondBookDto);
 
         // When
         when(bookRepository.findAllByCategoryId(pageable, VALID_BOOK_ID)).thenReturn(bookPage);

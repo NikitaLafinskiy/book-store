@@ -1,12 +1,23 @@
 package com.bookstore.controller;
 
-import com.bookstore.config.BookstoreMySqlContainer;
+import static com.bookstore.util.TestUtil.bootstrapBookDtoList;
+import static com.bookstore.util.TestUtil.compareTruncatedRoundedDecimals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 import com.bookstore.dto.book.BookDto;
 import com.bookstore.dto.book.CreateBookRequestDto;
 import com.bookstore.exception.EntityNotFoundException;
-import com.bookstore.util.TestUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.ConstraintViolationException;
+import java.math.BigDecimal;
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -19,23 +30,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static com.bookstore.util.TestUtil.bootstrapBookDtoList;
-import static com.bookstore.util.TestUtil.compareTruncatedRoundedDecimals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -61,10 +56,10 @@ public class BookControllerTest {
 
     @Test
     @DisplayName("""
-        Given a valid request to save a book
-        When POST request is sent to /api/books
-        Then return a Book Dto
-        """)
+            Given a valid request to save a book
+            When POST request is sent to /api/books
+            Then return a Book Dto
+            """)
     @WithMockUser(username = "admin@bookstore.com", roles = {"ADMIN"})
     public void save_validRequest_returnBookDto() throws Exception {
         // Given
@@ -81,9 +76,8 @@ public class BookControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(createBookRequestDto);
 
         // When
-        MvcResult result = mockMvc.perform(post(
-                "/books"
-        ).content(jsonRequest)
+        MvcResult result = mockMvc.perform(post("/books")
+                        .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -91,7 +85,8 @@ public class BookControllerTest {
                 BookDto.class);
 
         // Then
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "categoryIds", "coverImage", "id", "description"));
+        assertTrue(EqualsBuilder.reflectionEquals(expected, actual,
+                "categoryIds", "coverImage", "id", "description"));
     }
 
     @Test
@@ -109,12 +104,14 @@ public class BookControllerTest {
         List<BookDto> expected = bootstrapBookDtoList();
 
         // When
-        MvcResult result = mockMvc.perform(get("/books").contentType(MediaType.APPLICATION_JSON_VALUE))
+        MvcResult result = mockMvc.perform(get("/books")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Then
-        List<BookDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        List<BookDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
                 });
         assertEquals(expected.size(), actual.size());
         for (int i = 0; i < actual.size(); i++) {
@@ -125,7 +122,8 @@ public class BookControllerTest {
                     "id",
                     "description",
                     "price"));
-            assertTrue(compareTruncatedRoundedDecimals(expectedBook.getPrice(), actualBook.getPrice()));
+            assertTrue(compareTruncatedRoundedDecimals(expectedBook.getPrice(),
+                    actualBook.getPrice()));
             assertEquals(expectedBook.getCategoryIds().size(), actualBook.getCategoryIds().size());
         }
     }
@@ -144,8 +142,9 @@ public class BookControllerTest {
         // When
         mockMvc.perform(get("/books/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class, result.getResolvedException()));
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class,
+                        result.getResolvedException()));
 
         // Then
     }
@@ -159,7 +158,7 @@ public class BookControllerTest {
             """
     )
     @WithMockUser(username = "user", roles = {"ADMIN"})
-    public void save_invalidUser_returnForbidden() throws Exception {
+    public void save_invalidRequestDto_returnBadRequest() throws Exception {
         // Given
         String invalidIsbn = "99999999";
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto()
@@ -170,9 +169,8 @@ public class BookControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(createBookRequestDto);
 
         // When
-        mockMvc.perform(post(
-                "/books"
-        ).content(jsonRequest)
+        mockMvc.perform(post("/books")
+                        .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
 

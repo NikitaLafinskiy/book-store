@@ -4,12 +4,11 @@ import com.bookstore.dto.book.BookDto;
 import com.bookstore.dto.category.CategoryDto;
 import com.bookstore.entity.Book;
 import com.bookstore.entity.Category;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 public class TestUtil {
-    private final static Long CATEGORY_ID = 1L;
+    private static final Long CATEGORY_ID = 1L;
 
     public static List<BookDto> bootstrapBookDtoList() {
         BookDto firstBook = new BookDto();
@@ -35,7 +34,7 @@ public class TestUtil {
     }
 
     public static List<Book> bootstrapBookList() {
-        Category category = bootstrapCategory();
+        final Category category = bootstrapCategory();
 
         Book firstBook = new Book();
         firstBook.setId(1L);
@@ -82,6 +81,7 @@ public class TestUtil {
     }
 
     public static boolean compareTruncatedRoundedDecimals(BigDecimal expected, BigDecimal actual) {
-        return Math.round(Math.floor(expected.doubleValue() * 100) / 100) == Math.round(Math.floor(actual.doubleValue() * 100) / 100);
+        return Math.round(Math.floor(expected.doubleValue() * 100) / 100)
+                == Math.round(Math.floor(actual.doubleValue() * 100) / 100);
     }
 }

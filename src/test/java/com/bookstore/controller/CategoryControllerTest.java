@@ -1,12 +1,18 @@
 package com.bookstore.controller;
 
-import com.bookstore.config.BookstoreMySqlContainer;
+import static com.bookstore.util.TestUtil.bootstrapCategoryDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 import com.bookstore.dto.category.CategoryDto;
 import com.bookstore.dto.category.CreateCategoryRequestDto;
-import com.bookstore.entity.Category;
-import com.bookstore.util.TestUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,18 +24,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.List;
-
-import static com.bookstore.util.TestUtil.bootstrapCategoryDto;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
 @Testcontainers
@@ -59,7 +54,7 @@ public class CategoryControllerTest {
             """
     )
     @WithMockUser(username = "user")
-    public void findAll_called_returnListOfCategoryDtos() throws Exception {
+    public void findAll_validRequest_returnListOfCategoryDtos() throws Exception {
         // Given
         CategoryDto categoryDto = bootstrapCategoryDto();
         List<CategoryDto> expected = List.of(categoryDto);
@@ -128,6 +123,6 @@ public class CategoryControllerTest {
         // When
         mockMvc.perform(get("/categories/" + invalidId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }
