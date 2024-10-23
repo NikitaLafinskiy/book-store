@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +45,7 @@ public class BookController {
     })
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
-    public BookDto getBookById(@PathVariable Long id) {
+    public BookDto getBookById(@Positive @PathVariable Long id) {
         return bookService.findById(id);
     }
 

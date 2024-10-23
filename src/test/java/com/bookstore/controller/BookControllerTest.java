@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import com.bookstore.dto.book.BookDto;
 import com.bookstore.dto.book.CreateBookRequestDto;
-import com.bookstore.exception.EntityNotFoundException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -30,6 +29,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -142,11 +142,9 @@ public class BookControllerTest {
         // When
         mockMvc.perform(get("/books/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class,
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertInstanceOf(HandlerMethodValidationException.class,
                         result.getResolvedException()));
-
-        // Then
     }
 
     @Test
@@ -173,7 +171,5 @@ public class BookControllerTest {
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
-
-        // Then
     }
 }

@@ -123,6 +123,6 @@ public class CategoryControllerTest {
         // When
         mockMvc.perform(get("/categories/" + invalidId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 }
