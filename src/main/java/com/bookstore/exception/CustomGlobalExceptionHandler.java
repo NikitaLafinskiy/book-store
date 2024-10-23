@@ -22,8 +22,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
+        Map<String, Object> error = composeException(ex);
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             error.put(fieldError.getField() + "fieldError",
                     fieldError.getField() + ": " + fieldError.getDefaultMessage());
@@ -33,18 +32,27 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(RegistrationException.class)
     public ResponseEntity<Object> handleRegistrationException(RegistrationException ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("message", ex.getMessage());
-        error.put("timestamp", LocalDateTime.now());
+        Map<String, Object> error = composeException(ex);
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleRegistrationException(EntityNotFoundException ex) {
+        Map<String, Object> error = composeException(ex);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
+        Map<String, Object> error = composeException(ex);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private Map<String, Object> composeException(Exception ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("exceptionType", ex.getClass().getName());
         error.put("message", ex.getMessage());
         error.put("timestamp", LocalDateTime.now());
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        return error;
     }
 }

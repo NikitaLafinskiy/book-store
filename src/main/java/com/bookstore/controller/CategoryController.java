@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class CategoryController {
     })
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
-    public CategoryDto getCategoryById(@PathVariable Long id) {
+    public CategoryDto getCategoryById(@Positive @PathVariable Long id) {
         return categoryService.findById(id);
     }
 
@@ -85,7 +86,7 @@ public class CategoryController {
     })
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/books")
-    public List<BookDto> getBooksByCategoryIds(@PathVariable Long id, Pageable pageable) {
-        return bookService.getBooksByCategoryIds(id, pageable);
+    public List<BookDto> getBooksByCategoryId(@Positive @PathVariable Long id, Pageable pageable) {
+        return bookService.getBooksByCategoryId(id, pageable);
     }
 }

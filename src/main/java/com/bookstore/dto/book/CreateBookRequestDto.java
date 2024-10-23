@@ -8,9 +8,11 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.ISBN;
 
 @Data
+@Accessors(chain = true)
 public class CreateBookRequestDto {
     @NotBlank
     @Size(min = 5, max = 255)
