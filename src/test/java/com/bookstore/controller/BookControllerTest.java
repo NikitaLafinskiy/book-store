@@ -1,9 +1,9 @@
 package com.bookstore.controller;
 
 import static com.bookstore.util.TestUtil.bootstrapBookDtoList;
-import static com.bookstore.util.TestUtil.compareTruncatedRoundedDecimals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,6 +16,7 @@ import com.bookstore.dto.book.CreateBookRequestDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,6 +38,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Sql(scripts = {"classpath:/database/books/delete-all-books-and-categories.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class BookControllerTest {
+    private static final int BIG_DECIMAL_SCALE = 1;
+    private static final int BIG_DECIMAL_EQUAL = 0;
     private static final String VALID_BOOK_AUTHOR = "Author";
     private static final String VALID_BOOK_TITLE = "Title";
     private static final String VALID_BOOK_ISBN = "978-0-439-02348-1";
@@ -122,8 +125,10 @@ public class BookControllerTest {
                     "id",
                     "description",
                     "price"));
-            assertTrue(compareTruncatedRoundedDecimals(expectedBook.getPrice(),
-                    actualBook.getPrice()));
+            assertSame(expectedBook.getPrice()
+                    .setScale(BIG_DECIMAL_SCALE, RoundingMode.FLOOR)
+                    .compareTo(actualBook.getPrice()
+                            .setScale(BIG_DECIMAL_SCALE, RoundingMode.FLOOR)), BIG_DECIMAL_EQUAL);
             assertEquals(expectedBook.getCategoryIds().size(), actualBook.getCategoryIds().size());
         }
     }

@@ -86,7 +86,7 @@ public class CategoryController {
     })
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/books")
-    public List<BookDto> getBooksByCategoryId(@PathVariable Long id, Pageable pageable) {
+    public List<BookDto> getBooksByCategoryId(@Positive @PathVariable Long id, Pageable pageable) {
         return bookService.getBooksByCategoryId(id, pageable);
     }
 }
